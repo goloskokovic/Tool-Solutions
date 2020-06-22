@@ -145,7 +145,7 @@ fi
 cp gator/daemon/gatord $HOME/
 
 # Arm Compute Library 
-git clone https://github.com/ARM-software/ComputeLibrary.git
+git clone --branch v19.08 https://github.com/ARM-software/ComputeLibrary.git
 
 echo "building Arm CL"
 pushd ComputeLibrary
@@ -222,7 +222,7 @@ fi
 popd
 
 # Arm NN
-git clone https://github.com/ARM-software/armnn.git
+git clone --branch v19.05 https://github.com/ARM-software/armnn.git
 
 pushd pkg/tensorflow/
 
