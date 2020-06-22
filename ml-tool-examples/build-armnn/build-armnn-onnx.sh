@@ -71,12 +71,27 @@ done
 cd armnn-devenv 
 
 # packages to install 
-packages="git wget curl autoconf autogen automake libtool scons make cmake gcc g++ unzip bzip2"
+packages="git wget curl autoconf autogen automake libtool scons make cmake gcc g++ unzip bzip2 build-essential libcurl4-openssl-dev libssl-dev wget python3 python3-pip python3-dev"
 for package in $packages; do
     if ! IsPackageInstalled $package; then
         sudo apt-get install -y $package
     fi
 done
+
+pip3 install --upgrade pip
+pip3 install --upgrade setuptools
+pip3 install --upgrade wheel
+pip3 install numpy
+
+wget https://cmake.org/files/v3.13/cmake-3.13.5.tar.gz;
+tar zxf cmake-3.13.5.tar.gz
+
+cd /cmake-3.13.5
+./configure --system-curl
+make
+sudo make install
+
+popd
 
 # extra packages when cross compiling
 if [ $CrossCompile = "True" ]; then
