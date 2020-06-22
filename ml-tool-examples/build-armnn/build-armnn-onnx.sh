@@ -71,7 +71,7 @@ done
 cd armnn-devenv 
 
 # packages to install 
-packages="git wget curl autoconf autogen automake libtool scons make cmake gcc g++ unzip bzip2 zlib1g-dev build-essential libcurl4-openssl-dev libssl-dev wget python3 python3-pip python3-dev"
+packages="git wget curl autoconf autogen automake libtool scons make gcc g++ unzip bzip2 zlib1g-dev build-essential libcurl4-openssl-dev libssl-dev wget python3 python3-pip python3-dev"
 for package in $packages; do
     if ! IsPackageInstalled $package; then
         sudo apt-get install -y $package
