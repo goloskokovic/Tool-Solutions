@@ -181,12 +181,12 @@ popd
 pushd pkg
 mkdir install
 git clone --branch 3.5.x https://github.com/protocolbuffers/protobuf.git
-#git clone https://github.com/tensorflow/tensorflow.git
-#cd tensorflow
-## need specific version of tensorflow
-## https://github.com/ARM-software/armnn/issues/267
-#git checkout a0043f9262dc1b0e7dc4bdf3a7f0ef0bebc4891e
-#cd ../
+git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+# need specific version of tensorflow
+# https://github.com/ARM-software/armnn/issues/267
+git checkout a0043f9262dc1b0e7dc4bdf3a7f0ef0bebc4891e
+cd ../
 
 # build Protobuf
 cd protobuf
@@ -218,7 +218,7 @@ popd
 
 # ONNX support 
 
-#pushd pkg
+pushd pkg
 
 export ONNX_ML=1 #To clone ONNX with its ML extension
 git clone --recursive https://github.com/onnx/onnx.git
@@ -239,15 +239,15 @@ popd
 # Arm NN
 git clone --branch v19.05 https://github.com/ARM-software/armnn.git
 
-#pushd pkg/tensorflow/
+pushd pkg/tensorflow/
 
-#if [ $CrossCompile = "True" ]; then
-#    $HOME/armnn-devenv/armnn/scripts/generate_tensorflow_protobuf.sh $HOME/armnn-devenv/pkg/tensorflow-protobuf $HOME/armnn-devenv/pkg/host
-#else
-#    $HOME/armnn-devenv/armnn/scripts/generate_tensorflow_protobuf.sh $HOME/armnn-devenv/pkg/tensorflow-protobuf $HOME/armnn-devenv/pkg/install
-#fi
+if [ $CrossCompile = "True" ]; then
+    $HOME/armnn-devenv/armnn/scripts/generate_tensorflow_protobuf.sh $HOME/armnn-devenv/pkg/tensorflow-protobuf $HOME/armnn-devenv/pkg/host
+else
+    $HOME/armnn-devenv/armnn/scripts/generate_tensorflow_protobuf.sh $HOME/armnn-devenv/pkg/tensorflow-protobuf $HOME/armnn-devenv/pkg/install
+fi
 
-#popd
+popd
 
 # Arm NN
 pushd armnn
@@ -266,8 +266,8 @@ $CrossOptions  \
 -DARMCOMPUTE_ROOT=$HOME/armnn-devenv/ComputeLibrary/ \
 -DARMCOMPUTE_BUILD_DIR=$HOME/armnn-devenv/ComputeLibrary/build \
 -DBOOST_ROOT=$HOME/armnn-devenv/pkg/boost/install/ \
-#-DTF_GENERATED_SOURCES=$HOME/armnn-devenv/pkg/tensorflow-protobuf/  \
-#-DBUILD_TF_PARSER=1 \
+-DTF_GENERATED_SOURCES=$HOME/armnn-devenv/pkg/tensorflow-protobuf/  \
+-DBUILD_TF_PARSER=1 \
 -DBUILD_ONNX_PARSER=1 \
 -DONNX_GENERATED_SOURCES=$HOME/armnn-devenv/pkg/onnx \
 -DPROTOBUF_ROOT=$HOME/armnn-devenv/pkg/install   \
