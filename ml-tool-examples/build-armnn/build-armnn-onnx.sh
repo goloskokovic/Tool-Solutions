@@ -289,6 +289,18 @@ else
 fi
 popd
 
+
+# ONNX Runtime
+git clone --recursive https://github.com/Microsoft/onnxruntime
+cd onnxruntime
+
+export CPATH=~/armnn-devenv/ComputeLibrary/include/:~/armnn-devenv/ComputeLibrary/
+export LD_LIBRARY_PATH=~/armnn-devenv/ComputeLibrary/build/
+
+./build.sh --use_acl=ACL_1908 --enable_pybind --build_wheel
+
+popd
+
 echo "done, everything in armnn-devenv/"
 cd ..
 
