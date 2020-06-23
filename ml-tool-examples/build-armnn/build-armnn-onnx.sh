@@ -87,7 +87,7 @@ wget https://cmake.org/files/v3.13/cmake-3.13.5.tar.gz
 tar zxf cmake-3.13.5.tar.gz
 
 cd /cmake-3.13.5
-./configure --system-curl
+../configure --system-curl
 make
 sudo make install
 
