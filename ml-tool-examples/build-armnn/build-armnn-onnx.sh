@@ -83,7 +83,7 @@ pip3 install --upgrade setuptools
 pip3 install --upgrade wheel
 pip3 install numpy
 
-wget https://cmake.org/files/v3.13/cmake-3.13.5.tar.gz;
+wget https://cmake.org/files/v3.13/cmake-3.13.5.tar.gz
 tar zxf cmake-3.13.5.tar.gz
 
 cd /cmake-3.13.5
@@ -169,7 +169,7 @@ pushd ComputeLibrary
 VER=`gcc -dumpversion | awk 'BEGIN{FS="."} {print $1}'`
 echo "gcc version is $VER"
 
-scons arch=$Arch neon=1 opencl=$OpenCL embed_kernels=$OpenCL Werror=0 \
+scons arch=$Arch neon=1 opencl=0 embed_kernels=0 Werror=0 \
   extra_cxx_flags="-fPIC" benchmark_tests=0 examples=0 validation_tests=0 \
   os=linux gator_dir="$HOME/armnn-devenv/gator" -j $NPROC
 
@@ -180,7 +180,7 @@ popd
 
 pushd pkg
 mkdir install
-#git clone --branch 3.5.x https://github.com/protocolbuffers/protobuf.git
+git clone --branch 3.5.x https://github.com/protocolbuffers/protobuf.git
 #git clone https://github.com/tensorflow/tensorflow.git
 #cd tensorflow
 ## need specific version of tensorflow
@@ -188,32 +188,32 @@ mkdir install
 #git checkout a0043f9262dc1b0e7dc4bdf3a7f0ef0bebc4891e
 #cd ../
 
-## build Protobuf
-#cd protobuf
-#./autogen.sh
+# build Protobuf
+cd protobuf
+./autogen.sh
 
 
-## Extra protobuf build for host machine when cross compiling
-#if [ $CrossCompile = "True" ]; then
-#    mkdir host-build ; cd host-build
-#    ../configure --prefix=$HOME/armnn-devenv/pkg/host
-#    make -j NPROC
-#    make install
-#    make clean
-#    cd ..
-#fi
+# Extra protobuf build for host machine when cross compiling
+if [ $CrossCompile = "True" ]; then
+    mkdir host-build ; cd host-build
+    ../configure --prefix=$HOME/armnn-devenv/pkg/host
+    make -j NPROC
+    make install
+    make clean
+    cd ..
+fi
 
-#mkdir build ; cd build
-#if [ $CrossCompile = "True" ]; then
-#    ../configure --prefix=$HOME/armnn-devenv/pkg/install --host=arm-linux CC=$PREFIX\gcc CXX=$PREFIX\g++ --with-protoc=$HOME/armnn-devenv/pkg/host/bin/protoc
-#else
-#    ../configure --prefix=$HOME/armnn-devenv/pkg/install 
-#fi
+mkdir build ; cd build
+if [ $CrossCompile = "True" ]; then
+    ../configure --prefix=$HOME/armnn-devenv/pkg/install --host=arm-linux CC=$PREFIX\gcc CXX=$PREFIX\g++ --with-protoc=$HOME/armnn-devenv/pkg/host/bin/protoc
+else
+    ../configure --prefix=$HOME/armnn-devenv/pkg/install 
+fi
 
-#make -j $NPROC
-#make install 
+make -j $NPROC
+make install 
 
-#popd
+popd
 
 
 # ONNX support 
@@ -275,9 +275,9 @@ $CrossOptions  \
 -DPROFILING_BACKEND_STREAMLINE=1 \
 -DGATOR_ROOT=$HOME/armnn-devenv/gator \
 -DARMCOMPUTENEON=1  \
--DARMCOMPUTECL=$OpenCL \
-#-DPROTOBUF_LIBRARY_DEBUG=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
-#-DPROTOBUF_LIBRARY_RELEASE=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
+-DARMCOMPUTECL=0 \
+-DPROTOBUF_LIBRARY_DEBUG=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
+-DPROTOBUF_LIBRARY_RELEASE=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
 -DCMAKE_CXX_FLAGS="-Wno-error=sign-conversion" \
 -DCMAKE_BUILD_TYPE=Debug
 
