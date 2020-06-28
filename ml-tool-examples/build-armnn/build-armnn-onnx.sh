@@ -85,9 +85,8 @@ pip3 install numpy
 
 wget https://cmake.org/files/v3.13/cmake-3.13.5.tar.gz
 tar zxf cmake-3.13.5.tar.gz
-
-cd /cmake-3.13.5
-../configure --system-curl
+cd cmake-3.13.5
+./configure --system-curl
 make
 sudo make install
 
@@ -177,130 +176,6 @@ popd
 
 # TensorFlow and Google protobuf
 # Latest TensorFlow had a problem, udpate branch as needed
-
-pushd pkg
-mkdir install
-git clone --branch 3.5.x https://github.com/protocolbuffers/protobuf.git
-git clone https://github.com/tensorflow/tensorflow.git
-cd tensorflow
-# need specific version of tensorflow
-# https://github.com/ARM-software/armnn/issues/267
-git checkout a0043f9262dc1b0e7dc4bdf3a7f0ef0bebc4891e
-cd ../
-
-# build Protobuf
-cd protobuf
-./autogen.sh
-
-
-# Extra protobuf build for host machine when cross compiling
-if [ $CrossCompile = "True" ]; then
-    mkdir host-build ; cd host-build
-    ../configure --prefix=$HOME/armnn-devenv/pkg/host
-    make -j NPROC
-    make install
-    make clean
-    cd ..
-fi
-
-mkdir build ; cd build
-if [ $CrossCompile = "True" ]; then
-    ../configure --prefix=$HOME/armnn-devenv/pkg/install --host=arm-linux CC=$PREFIX\gcc CXX=$PREFIX\g++ --with-protoc=$HOME/armnn-devenv/pkg/host/bin/protoc
-else
-    ../configure --prefix=$HOME/armnn-devenv/pkg/install 
-fi
-
-make -j $NPROC
-make install 
-
-popd
-
-
-# ONNX support 
-
-pushd pkg
-
-export ONNX_ML=1 #To clone ONNX with its ML extension
-git clone --recursive https://github.com/onnx/onnx.git
-unset ONNX_ML
-
-cd onnx
-
-export LD_LIBRARY_PATH=$HOME/armnn-devenv/pkg/install/lib:$LD_LIBRARY_PATH
-
-if [ $CrossCompile = "True" ]; then
-    $HOME/armnn-devenv/pkg/host/bin/protoc onnx/onnx.proto --proto_path=. --proto_path=$HOME/armnn-devenv/pkg/host/include --cpp_out $HOME/armnn-devenv/pkg/onnx
-else
-    $HOME/armnn-devenv/pkg/install/bin/protoc onnx/onnx.proto --proto_path=. --proto_path=$HOME/armnn-devenv/pkg/install/include --cpp_out $HOME/armnn-devenv/pkg/onnx
-fi
-
-popd
-
-# Arm NN
-git clone --branch v19.05 https://github.com/ARM-software/armnn.git
-
-pushd pkg/tensorflow/
-
-if [ $CrossCompile = "True" ]; then
-    $HOME/armnn-devenv/armnn/scripts/generate_tensorflow_protobuf.sh $HOME/armnn-devenv/pkg/tensorflow-protobuf $HOME/armnn-devenv/pkg/host
-else
-    $HOME/armnn-devenv/armnn/scripts/generate_tensorflow_protobuf.sh $HOME/armnn-devenv/pkg/tensorflow-protobuf $HOME/armnn-devenv/pkg/install
-fi
-
-popd
-
-# Arm NN
-pushd armnn
-mkdir build ; cd build
-
-CrossOptions=""
-if [ $CrossCompile = "True" ]; then
-    CrossOptions="-DCMAKE_LINKER=aarch64-linux-gnu-ld \
-                  -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc \
-                  -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ "
-fi
-
-cmake ..  \
-$CrossOptions  \
--DCMAKE_C_COMPILER_FLAGS=-fPIC \
--DARMCOMPUTE_ROOT=$HOME/armnn-devenv/ComputeLibrary/ \
--DARMCOMPUTE_BUILD_DIR=$HOME/armnn-devenv/ComputeLibrary/build \
--DBOOST_ROOT=$HOME/armnn-devenv/pkg/boost/install/ \
--DTF_GENERATED_SOURCES=$HOME/armnn-devenv/pkg/tensorflow-protobuf/  \
--DBUILD_TF_PARSER=1 \
--DBUILD_ONNX_PARSER=1 \
--DONNX_GENERATED_SOURCES=$HOME/armnn-devenv/pkg/onnx \
--DPROTOBUF_ROOT=$HOME/armnn-devenv/pkg/install   \
--DPROTOBUF_INCLUDE_DIRS=$HOME/armnn-devenv/pkg/install/include   \
--DPROFILING_BACKEND_STREAMLINE=1 \
--DGATOR_ROOT=$HOME/armnn-devenv/gator \
--DARMCOMPUTENEON=1  \
--DARMCOMPUTECL=0 \
--DPROTOBUF_LIBRARY_DEBUG=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
--DPROTOBUF_LIBRARY_RELEASE=$HOME/armnn-devenv/pkg/install/lib/libprotobuf.so \
--DCMAKE_CXX_FLAGS="-Wno-error=sign-conversion" \
--DCMAKE_BUILD_TYPE=Debug
-
-if [ $Arch = "armv7l" ] || [ $MEM -lt 2000000 ]; then
-    # avoid running out of memory on smaller systems 
-    make
-else
-    make -j $NPROC
-fi
-popd
-
-
-# ONNX Runtime
-git clone --recursive https://github.com/Microsoft/onnxruntime
-cd onnxruntime
-
-export CPATH=~/armnn-devenv/ComputeLibrary/include/:~/armnn-devenv/ComputeLibrary/
-export LD_LIBRARY_PATH=~/armnn-devenv/ComputeLibrary/build/
-
-./build.sh --use_acl=ACL_1908 --enable_pybind --build_wheel
-
-popd
-
 echo "done, everything in armnn-devenv/"
 cd ..
 
