@@ -126,28 +126,6 @@ else
 fi
 
 
-# Boost
-
-mkdir -p pkg/boost 
-echo "building boost"
-pushd pkg/boost
-
-wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2
-tar xf boost_1_64_0.tar.bz2
-cd boost_1_64_0
-./bootstrap.sh --prefix=$HOME/armnn-devenv/pkg/boost/install
-
-Toolset=""
-if [ $CrossCompile = "True" ]; then
-    cp tools/build/example/user-config.jam project-config.jam
-    sed -i "/# using gcc ;/c using gcc : arm : $PREFIX\g++ ;" project-config.jam
-    Toolset="toolset=gcc-arm"
-fi
-
-./b2 install link=static cxxflags=-fPIC $Toolset --with-filesystem --with-test --with-log --with-program_options --prefix=$HOME/armnn-devenv/pkg/boost/install 
-
-popd
-
 # gator
 git clone https://github.com/ARM-software/gator.git
 
