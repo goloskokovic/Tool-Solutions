@@ -90,7 +90,7 @@ cd cmake-3.13.5
 make
 sudo make install
 
-popd
+cd ..
 
 # extra packages when cross compiling
 if [ $CrossCompile = "True" ]; then
