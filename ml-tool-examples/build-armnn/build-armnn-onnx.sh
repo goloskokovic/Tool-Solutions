@@ -82,6 +82,7 @@ pip3 install --upgrade pip
 pip3 install --upgrade setuptools
 pip3 install --upgrade wheel
 pip3 install numpy
+pip3 install flake8
 
 wget https://cmake.org/files/v3.13/cmake-3.13.5.tar.gz
 tar zxf cmake-3.13.5.tar.gz
