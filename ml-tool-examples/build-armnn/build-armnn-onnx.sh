@@ -153,8 +153,15 @@ scons arch=$Arch neon=1 opencl=0 embed_kernels=0 Werror=0 \
 
 popd
 
-# TensorFlow and Google protobuf
-# Latest TensorFlow had a problem, udpate branch as needed
+git clone --recursive https://github.com/Microsoft/onnxruntime.git
+cd onnxruntime
+
+export CPATH=~/armnn-devenv/ComputeLibrary/include/:~/armnn-devenv/ComputeLibrary/
+export LD_LIBRARY_PATH=~/armnn-devenv/ComputeLibrary/build/
+
+./build.sh --use_acl=ACL_1908 --update --build --build_wheel
+
+
 echo "done, everything in armnn-devenv/"
 cd ..
 
